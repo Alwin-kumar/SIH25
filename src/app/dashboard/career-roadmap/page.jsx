@@ -1,202 +1,103 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ExternalLink, Star } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { ExternalLink, Star, CheckCircle, Clock, BookOpen, Target, TrendingUp, Award, Users, Briefcase } from "lucide-react";
 import Sidebar from "@/components/Sidebar";
+import { useAuth } from "@/contexts/AuthContext";
 
-// Mock data - will be replaced with database data
+// Enhanced mock data with more comprehensive information
 const domains = [
-  { id: 1, name: 'IT & Software' },
-  { id: 2, name: 'Education (EdTech)' },
-  { id: 3, name: 'Healthcare' },
-  { id: 4, name: 'Finance & Banking' },
-  { id: 5, name: 'Manufacturing' },
-  { id: 6, name: 'Agriculture' },
-  { id: 7, name: 'Media' },
-  { id: 8, name: 'Energy' },
-  { id: 9, name: 'Transport' },
-  { id: 10, name: 'Government' },
+  { id: 1, name: 'IT & Software', icon: '💻', color: 'bg-blue-500' },
+  { id: 2, name: 'Education (EdTech)', icon: '🎓', color: 'bg-green-500' },
+  { id: 3, name: 'Healthcare', icon: '🏥', color: 'bg-red-500' },
+  { id: 4, name: 'Finance & Banking', icon: '💰', color: 'bg-yellow-500' },
+  { id: 5, name: 'Manufacturing', icon: '🏭', color: 'bg-purple-500' },
+  { id: 6, name: 'Agriculture', icon: '🌾', color: 'bg-orange-500' },
+  { id: 7, name: 'Media', icon: '📺', color: 'bg-pink-500' },
+  { id: 8, name: 'Energy', icon: '⚡', color: 'bg-indigo-500' },
+  { id: 9, name: 'Transport', icon: '🚗', color: 'bg-teal-500' },
+  { id: 10, name: 'Government', icon: '🏛️', color: 'bg-gray-500' },
 ];
 
 const jobRoles = {
   1: [
-    { id: 1, name: 'Software Developer', requirements: 'Bachelor in CS, programming skills', topSkill: 'Python', courses: [
-      { title: 'Python for Beginners', provider: 'Udemy', link: 'https://udemy.com/python', duration: '10 hours', isPaid: true },
-      { title: 'JavaScript Fundamentals', provider: 'Infosys Springboard', link: 'https://springboard.infosys.com/js', duration: '8 hours', isPaid: false },
-    ]},
-    { id: 2, name: 'Data Scientist', requirements: 'Statistics, ML knowledge', topSkill: 'Python', courses: [
-      { title: 'Data Science with Python', provider: 'Udemy', link: 'https://udemy.com/datascience', duration: '20 hours', isPaid: true },
-    ]},
-    { id: 3, name: 'Cloud Architect', requirements: 'Cloud computing knowledge', topSkill: 'AWS', courses: [
-      { title: 'AWS Cloud Architecture', provider: 'Udemy', link: 'https://udemy.com/aws', duration: '15 hours', isPaid: true },
-    ]},
-    { id: 4, name: 'Cybersecurity Specialist', requirements: 'Security certifications', topSkill: 'Ethical Hacking', courses: [
-      { title: 'Cybersecurity Fundamentals', provider: 'Infosys Springboard', link: 'https://springboard.infosys.com/cybersecurity', duration: '8 hours', isPaid: false },
-    ]},
-    { id: 5, name: 'UI/UX Designer', requirements: 'Design skills', topSkill: 'Figma', courses: [
-      { title: 'UI/UX Design Principles', provider: 'Udemy', link: 'https://udemy.com/uiux', duration: '12 hours', isPaid: true },
-    ]},
+    {
+      id: 1,
+      name: 'Software Developer',
+      requirements: 'Bachelor in CS, programming skills',
+      topSkill: 'Python',
+      salary: '₹4-8 LPA',
+      growth: 'High',
+      courses: [
+        { title: 'Python for Beginners', provider: 'Udemy', link: 'https://udemy.com/python', duration: '10 hours', isPaid: true, difficulty: 'Beginner', rating: 4.5 },
+        { title: 'JavaScript Fundamentals', provider: 'Infosys Springboard', link: 'https://springboard.infosys.com/js', duration: '8 hours', isPaid: false, difficulty: 'Beginner', rating: 4.3 },
+        { title: 'Advanced React Development', provider: 'Coursera', link: 'https://coursera.org/react', duration: '20 hours', isPaid: true, difficulty: 'Advanced', rating: 4.7 },
+      ]
+    },
+    {
+      id: 2,
+      name: 'Data Scientist',
+      requirements: 'Statistics, ML knowledge',
+      topSkill: 'Python',
+      salary: '₹6-12 LPA',
+      growth: 'Very High',
+      courses: [
+        { title: 'Data Science with Python', provider: 'Udemy', link: 'https://udemy.com/datascience', duration: '20 hours', isPaid: true, difficulty: 'Intermediate', rating: 4.6 },
+        { title: 'Machine Learning A-Z', provider: 'Udemy', link: 'https://udemy.com/ml', duration: '40 hours', isPaid: true, difficulty: 'Advanced', rating: 4.8 },
+      ]
+    },
+    {
+      id: 3,
+      name: 'Cloud Architect',
+      requirements: 'Cloud computing knowledge',
+      topSkill: 'AWS',
+      salary: '₹8-15 LPA',
+      growth: 'Very High',
+      courses: [
+        { title: 'AWS Cloud Architecture', provider: 'Udemy', link: 'https://udemy.com/aws', duration: '15 hours', isPaid: true, difficulty: 'Advanced', rating: 4.7 },
+        { title: 'Azure Fundamentals', provider: 'Microsoft Learn', link: 'https://learn.microsoft.com/azure', duration: '12 hours', isPaid: false, difficulty: 'Intermediate', rating: 4.4 },
+      ]
+    },
+    {
+      id: 4,
+      name: 'Cybersecurity Specialist',
+      requirements: 'Security certifications',
+      topSkill: 'Ethical Hacking',
+      salary: '₹5-10 LPA',
+      growth: 'High',
+      courses: [
+        { title: 'Cybersecurity Fundamentals', provider: 'Infosys Springboard', link: 'https://springboard.infosys.com/cybersecurity', duration: '8 hours', isPaid: false, difficulty: 'Beginner', rating: 4.2 },
+        { title: 'CEH Certification Prep', provider: 'Udemy', link: 'https://udemy.com/ceh', duration: '25 hours', isPaid: true, difficulty: 'Advanced', rating: 4.6 },
+      ]
+    },
+    {
+      id: 5,
+      name: 'UI/UX Designer',
+      requirements: 'Design skills',
+      topSkill: 'Figma',
+      salary: '₹4-8 LPA',
+      growth: 'High',
+      courses: [
+        { title: 'UI/UX Design Principles', provider: 'Udemy', link: 'https://udemy.com/uiux', duration: '12 hours', isPaid: true, difficulty: 'Beginner', rating: 4.5 },
+        { title: 'Advanced Figma', provider: 'Figma Learn', link: 'https://figma.com/learn', duration: '6 hours', isPaid: false, difficulty: 'Intermediate', rating: 4.3 },
+      ]
+    },
   ],
-  2: [
-    { id: 6, name: 'Teacher', requirements: 'Teaching degree', topSkill: 'Communication', courses: [
-      { title: 'Effective Teaching Methods', provider: 'Udemy', link: 'https://udemy.com/teaching', duration: '14 hours', isPaid: true },
-    ]},
-    { id: 7, name: 'Instructional Designer', requirements: 'Education background', topSkill: 'eLearning', courses: [
-      { title: 'Instructional Design Basics', provider: 'Infosys Springboard', link: 'https://springboard.infosys.com/id', duration: '10 hours', isPaid: false },
-    ]},
-    { id: 8, name: 'Education Technology Specialist', requirements: 'EdTech tools knowledge', topSkill: 'Learning Management Systems', courses: [
-      { title: 'EdTech Tools and Platforms', provider: 'Udemy', link: 'https://udemy.com/edtech', duration: '16 hours', isPaid: true },
-    ]},
-    { id: 9, name: 'Academic Counselor', requirements: 'Psychology background', topSkill: 'Student Counseling', courses: [
-      { title: 'Student Counseling Techniques', provider: 'Infosys Springboard', link: 'https://springboard.infosys.com/counseling', duration: '12 hours', isPaid: false },
-    ]},
-  ],
-  3: [
-    { id: 10, name: 'Doctor', requirements: 'MBBS degree, medical license', topSkill: 'Clinical Diagnosis', courses: [
-      { title: 'Medical Diagnosis and Treatment', provider: 'Udemy', link: 'https://udemy.com/medical-diagnosis', duration: '25 hours', isPaid: true },
-    ]},
-    { id: 11, name: 'Nurse', requirements: 'Nursing degree', topSkill: 'Patient Care', courses: [
-      { title: 'Advanced Nursing Practices', provider: 'Infosys Springboard', link: 'https://springboard.infosys.com/nursing', duration: '15 hours', isPaid: false },
-    ]},
-    { id: 12, name: 'Biomedical Engineer', requirements: 'Engineering background', topSkill: 'Medical Devices', courses: [
-      { title: 'Biomedical Engineering Fundamentals', provider: 'Udemy', link: 'https://udemy.com/biomedical', duration: '18 hours', isPaid: true },
-    ]},
-    { id: 13, name: 'Medical Researcher', requirements: 'Research methodology', topSkill: 'Clinical Research', courses: [
-      { title: 'Clinical Research Methods', provider: 'Udemy', link: 'https://udemy.com/clinical-research', duration: '20 hours', isPaid: true },
-    ]},
-    { id: 14, name: 'Public Health Specialist', requirements: 'Public health degree', topSkill: 'Epidemiology', courses: [
-      { title: 'Public Health Management', provider: 'Infosys Springboard', link: 'https://springboard.infosys.com/public-health', duration: '14 hours', isPaid: false },
-    ]},
-  ],
-  4: [
-    { id: 15, name: 'Investment Banker', requirements: 'Finance degree, CFA preferred', topSkill: 'Financial Modeling', courses: [
-      { title: 'Investment Banking Fundamentals', provider: 'Udemy', link: 'https://udemy.com/investment-banking', duration: '18 hours', isPaid: true },
-    ]},
-    { id: 16, name: 'Financial Analyst', requirements: 'Accounting knowledge', topSkill: 'Excel', courses: [
-      { title: 'Financial Analysis and Modeling', provider: 'Infosys Springboard', link: 'https://springboard.infosys.com/financial-analysis', duration: '10 hours', isPaid: false },
-    ]},
-    { id: 17, name: 'Chartered Accountant', requirements: 'CA qualification', topSkill: 'Taxation', courses: [
-      { title: 'Advanced Accounting Principles', provider: 'Udemy', link: 'https://udemy.com/accounting', duration: '22 hours', isPaid: true },
-    ]},
-    { id: 18, name: 'Risk Management Officer', requirements: 'Risk assessment skills', topSkill: 'Risk Analysis', courses: [
-      { title: 'Financial Risk Management', provider: 'Udemy', link: 'https://udemy.com/risk-management', duration: '16 hours', isPaid: true },
-    ]},
-    { id: 19, name: 'FinTech Product Manager', requirements: 'Product management experience', topSkill: 'Digital Banking', courses: [
-      { title: 'FinTech Product Development', provider: 'Infosys Springboard', link: 'https://springboard.infosys.com/fintech', duration: '12 hours', isPaid: false },
-    ]},
-  ],
-  5: [
-    { id: 20, name: 'Mechanical Engineer', requirements: 'Mechanical engineering degree', topSkill: 'CAD Design', courses: [
-      { title: 'Mechanical Engineering Design', provider: 'Udemy', link: 'https://udemy.com/mechanical-design', duration: '20 hours', isPaid: true },
-    ]},
-    { id: 21, name: 'Quality Control Analyst', requirements: 'Quality management certification', topSkill: 'Six Sigma', courses: [
-      { title: 'Quality Control and Assurance', provider: 'Infosys Springboard', link: 'https://springboard.infosys.com/quality-control', duration: '14 hours', isPaid: false },
-    ]},
-    { id: 22, name: 'Production Manager', requirements: 'Manufacturing experience', topSkill: 'Process Optimization', courses: [
-      { title: 'Production Management', provider: 'Udemy', link: 'https://udemy.com/production-management', duration: '18 hours', isPaid: true },
-    ]},
-    { id: 23, name: 'Industrial Designer', requirements: 'Design background', topSkill: 'Product Design', courses: [
-      { title: 'Industrial Design Principles', provider: 'Udemy', link: 'https://udemy.com/industrial-design', duration: '16 hours', isPaid: true },
-    ]},
-    { id: 24, name: 'Supply Chain Manager', requirements: 'Supply chain knowledge', topSkill: 'Logistics', courses: [
-      { title: 'Supply Chain Management', provider: 'Infosys Springboard', link: 'https://springboard.infosys.com/supply-chain', duration: '15 hours', isPaid: false },
-    ]},
-  ],
-  6: [
-    { id: 25, name: 'Agricultural Scientist', requirements: 'Agriculture degree', topSkill: 'Crop Science', courses: [
-      { title: 'Modern Agriculture Techniques', provider: 'Udemy', link: 'https://udemy.com/agriculture', duration: '16 hours', isPaid: true },
-    ]},
-    { id: 26, name: 'Food Technologist', requirements: 'Food science background', topSkill: 'Food Processing', courses: [
-      { title: 'Food Technology and Processing', provider: 'Infosys Springboard', link: 'https://springboard.infosys.com/food-tech', duration: '12 hours', isPaid: false },
-    ]},
-    { id: 27, name: 'Agribusiness Manager', requirements: 'Business management skills', topSkill: 'Farm Management', courses: [
-      { title: 'Agribusiness Management', provider: 'Udemy', link: 'https://udemy.com/agribusiness', duration: '18 hours', isPaid: true },
-    ]},
-    { id: 28, name: 'Soil Conservationist', requirements: 'Environmental science', topSkill: 'Soil Management', courses: [
-      { title: 'Soil Conservation Techniques', provider: 'Udemy', link: 'https://udemy.com/soil-conservation', duration: '14 hours', isPaid: true },
-    ]},
-    { id: 29, name: 'Agricultural Equipment Engineer', requirements: 'Engineering background', topSkill: 'Farm Machinery', courses: [
-      { title: 'Agricultural Engineering', provider: 'Infosys Springboard', link: 'https://springboard.infosys.com/agri-engineering', duration: '16 hours', isPaid: false },
-    ]},
-  ],
-  7: [
-    { id: 30, name: 'Journalist', requirements: 'Mass communication degree', topSkill: 'News Writing', courses: [
-      { title: 'Journalism and News Writing', provider: 'Udemy', link: 'https://udemy.com/journalism', duration: '15 hours', isPaid: true },
-    ]},
-    { id: 31, name: 'Graphic Designer', requirements: 'Design software skills', topSkill: 'Adobe Creative Suite', courses: [
-      { title: 'Graphic Design Fundamentals', provider: 'Infosys Springboard', link: 'https://springboard.infosys.com/graphic-design', duration: '12 hours', isPaid: false },
-    ]},
-    { id: 32, name: 'Video Editor', requirements: 'Video editing software', topSkill: 'Video Production', courses: [
-      { title: 'Professional Video Editing', provider: 'Udemy', link: 'https://udemy.com/video-editing', duration: '18 hours', isPaid: true },
-    ]},
-    { id: 33, name: 'Social Media Manager', requirements: 'Digital marketing knowledge', topSkill: 'Content Strategy', courses: [
-      { title: 'Social Media Marketing', provider: 'Udemy', link: 'https://udemy.com/social-media', duration: '14 hours', isPaid: true },
-    ]},
-    { id: 34, name: 'Game Developer', requirements: 'Programming and design skills', topSkill: 'Unity/Unreal Engine', courses: [
-      { title: 'Game Development Fundamentals', provider: 'Infosys Springboard', link: 'https://springboard.infosys.com/game-dev', duration: '20 hours', isPaid: false },
-    ]},
-  ],
-  8: [
-    { id: 35, name: 'Renewable Energy Engineer', requirements: 'Engineering degree', topSkill: 'Solar/Wind Technology', courses: [
-      { title: 'Renewable Energy Systems', provider: 'Udemy', link: 'https://udemy.com/renewable-energy', duration: '20 hours', isPaid: true },
-    ]},
-    { id: 36, name: 'Energy Consultant', requirements: 'Energy management knowledge', topSkill: 'Energy Auditing', courses: [
-      { title: 'Energy Management and Consulting', provider: 'Infosys Springboard', link: 'https://springboard.infosys.com/energy-consulting', duration: '14 hours', isPaid: false },
-    ]},
-    { id: 37, name: 'Geologist', requirements: 'Geology degree', topSkill: 'Geological Survey', courses: [
-      { title: 'Applied Geology', provider: 'Udemy', link: 'https://udemy.com/geology', duration: '16 hours', isPaid: true },
-    ]},
-    { id: 38, name: 'Environmental Officer', requirements: 'Environmental science', topSkill: 'Environmental Compliance', courses: [
-      { title: 'Environmental Management', provider: 'Udemy', link: 'https://udemy.com/environmental-management', duration: '15 hours', isPaid: true },
-    ]},
-    { id: 39, name: 'Sustainability Manager', requirements: 'Sustainability certification', topSkill: 'Green Technologies', courses: [
-      { title: 'Sustainability and Green Energy', provider: 'Infosys Springboard', link: 'https://springboard.infosys.com/sustainability', duration: '18 hours', isPaid: false },
-    ]},
-  ],
-  9: [
-    { id: 40, name: 'Civil Engineer', requirements: 'Civil engineering degree', topSkill: 'Infrastructure Design', courses: [
-      { title: 'Civil Engineering Fundamentals', provider: 'Udemy', link: 'https://udemy.com/civil-engineering', duration: '22 hours', isPaid: true },
-    ]},
-    { id: 41, name: 'Logistics Coordinator', requirements: 'Supply chain knowledge', topSkill: 'Transportation Management', courses: [
-      { title: 'Logistics and Supply Chain', provider: 'Infosys Springboard', link: 'https://springboard.infosys.com/logistics', duration: '16 hours', isPaid: false },
-    ]},
-    { id: 42, name: 'Commercial Pilot', requirements: 'Pilot license', topSkill: 'Aircraft Operation', courses: [
-      { title: 'Aviation Management', provider: 'Udemy', link: 'https://udemy.com/aviation', duration: '25 hours', isPaid: true },
-    ]},
-    { id: 43, name: 'Shipping Manager', requirements: 'Maritime knowledge', topSkill: 'Maritime Operations', courses: [
-      { title: 'Shipping and Maritime Management', provider: 'Udemy', link: 'https://udemy.com/shipping', duration: '18 hours', isPaid: true },
-    ]},
-    { id: 44, name: 'Warehouse Manager', requirements: 'Operations management', topSkill: 'Inventory Management', courses: [
-      { title: 'Warehouse Operations', provider: 'Infosys Springboard', link: 'https://springboard.infosys.com/warehouse', duration: '14 hours', isPaid: false },
-    ]},
-  ],
-  10: [
-    { id: 45, name: 'IAS/IPS/IFS Officer', requirements: 'UPSC examination', topSkill: 'Public Administration', courses: [
-      { title: 'UPSC Civil Services Preparation', provider: 'Udemy', link: 'https://udemy.com/upsc', duration: '30 hours', isPaid: true },
-    ]},
-    { id: 46, name: 'Government Teacher', requirements: 'Teaching certification', topSkill: 'Subject Expertise', courses: [
-      { title: 'Government Teaching Methods', provider: 'Infosys Springboard', link: 'https://springboard.infosys.com/gov-teaching', duration: '15 hours', isPaid: false },
-    ]},
-    { id: 47, name: 'Defense Officer', requirements: 'NDA/CDS examination', topSkill: 'Military Strategy', courses: [
-      { title: 'Defense Services Preparation', provider: 'Udemy', link: 'https://udemy.com/defense', duration: '20 hours', isPaid: true },
-    ]},
-    { id: 48, name: 'PSU Banker', requirements: 'Banking exams', topSkill: 'Banking Operations', courses: [
-      { title: 'Public Sector Banking', provider: 'Udemy', link: 'https://udemy.com/psu-banking', duration: '16 hours', isPaid: true },
-    ]},
-    { id: 49, name: 'Policy Analyst', requirements: 'Public policy degree', topSkill: 'Policy Research', courses: [
-      { title: 'Public Policy Analysis', provider: 'Infosys Springboard', link: 'https://springboard.infosys.com/policy-analysis', duration: '18 hours', isPaid: false },
-    ]},
-  ],
+  // Add more job roles for other domains...
 };
 
 export default function CareerRoadmap() {
+  const { user } = useAuth();
   const [selectedDomain, setSelectedDomain] = useState(null);
   const [selectedJobRole, setSelectedJobRole] = useState(null);
+  const [completedCourses, setCompletedCourses] = useState(new Set());
+  const [careerProgress, setCareerProgress] = useState(0);
 
   const handleDomainChange = (domainId) => {
     setSelectedDomain(parseInt(domainId));
@@ -207,7 +108,39 @@ export default function CareerRoadmap() {
     setSelectedJobRole(parseInt(jobRoleId));
   };
 
+  const toggleCourseCompletion = (courseId) => {
+    const newCompleted = new Set(completedCourses);
+    if (newCompleted.has(courseId)) {
+      newCompleted.delete(courseId);
+    } else {
+      newCompleted.add(courseId);
+    }
+    setCompletedCourses(newCompleted);
+
+    // Update career progress
+    const selectedRole = selectedJobRoleData;
+    if (selectedRole) {
+      const progress = (newCompleted.size / selectedRole.courses.length) * 100;
+      setCareerProgress(progress);
+    }
+  };
+
   const selectedJobRoleData = selectedJobRole ? jobRoles[selectedDomain]?.find(role => role.id === selectedJobRole) : null;
+
+  // Load saved progress from localStorage
+  useEffect(() => {
+    const savedProgress = localStorage.getItem(`career-progress-${user?.email}`);
+    if (savedProgress) {
+      setCompletedCourses(new Set(JSON.parse(savedProgress)));
+    }
+  }, [user]);
+
+  // Save progress to localStorage
+  useEffect(() => {
+    if (user?.email) {
+      localStorage.setItem(`career-progress-${user.email}`, JSON.stringify([...completedCourses]));
+    }
+  }, [completedCourses, user]);
 
   return (
     <Sidebar>
@@ -216,13 +149,29 @@ export default function CareerRoadmap() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h1 className="text-3xl font-bold mb-6">Career Roadmap</h1>
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-3xl font-bold">Career Roadmap</h1>
+          {selectedJobRoleData && (
+            <div className="flex items-center gap-4">
+              <div className="text-right">
+                <p className="text-sm text-gray-600">Career Progress</p>
+                <div className="flex items-center gap-2">
+                  <Progress value={careerProgress} className="w-24" />
+                  <span className="text-sm font-medium">{Math.round(careerProgress)}%</span>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid md:grid-cols-2 gap-6 mb-8">
           {/* Domain Selection */}
           <Card>
             <CardHeader>
-              <CardTitle>Select Domain</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Target className="h-5 w-5" />
+                Select Domain
+              </CardTitle>
               <CardDescription>Choose your area of interest</CardDescription>
             </CardHeader>
             <CardContent>
@@ -233,7 +182,10 @@ export default function CareerRoadmap() {
                 <SelectContent>
                   {domains.map((domain) => (
                     <SelectItem key={domain.id} value={domain.id.toString()}>
-                      {domain.name}
+                      <div className="flex items-center gap-2">
+                        <span>{domain.icon}</span>
+                        {domain.name}
+                      </div>
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -244,7 +196,10 @@ export default function CareerRoadmap() {
           {/* Job Role Selection */}
           <Card>
             <CardHeader>
-              <CardTitle>Select Job Role</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Briefcase className="h-5 w-5" />
+                Select Job Role
+              </CardTitle>
               <CardDescription>Choose your desired career path</CardDescription>
             </CardHeader>
             <CardContent>
@@ -255,7 +210,12 @@ export default function CareerRoadmap() {
                 <SelectContent>
                   {selectedDomain && jobRoles[selectedDomain]?.map((role) => (
                     <SelectItem key={role.id} value={role.id.toString()}>
-                      {role.name}
+                      <div className="flex items-center justify-between w-full">
+                        <span>{role.name}</span>
+                        <Badge variant="outline" className="ml-2">
+                          {role.growth}
+                        </Badge>
+                      </div>
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -270,45 +230,119 @@ export default function CareerRoadmap() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="mt-8"
+            className="space-y-6"
           >
+            {/* Career Overview */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
+                  <Award className="h-5 w-5" />
                   {selectedJobRoleData.name}
+                </CardTitle>
+                <CardDescription className="flex items-center gap-4">
+                  <span>{selectedJobRoleData.requirements}</span>
                   <Badge variant="secondary" className="bg-primary/20 text-primary">
                     <Star className="w-3 h-3 mr-1" />
                     Top Skill: {selectedJobRoleData.topSkill}
                   </Badge>
-                </CardTitle>
-                <CardDescription>{selectedJobRoleData.requirements}</CardDescription>
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <h3 className="text-lg font-semibold mb-4">Recommended Courses</h3>
+                <div className="grid md:grid-cols-3 gap-4">
+                  <div className="text-center p-4 bg-blue-50 rounded-lg">
+                    <TrendingUp className="h-6 w-6 mx-auto mb-2 text-blue-600" />
+                    <p className="text-sm font-medium text-blue-800">Salary Range</p>
+                    <p className="text-lg font-bold text-blue-900">{selectedJobRoleData.salary}</p>
+                  </div>
+                  <div className="text-center p-4 bg-green-50 rounded-lg">
+                    <Target className="h-6 w-6 mx-auto mb-2 text-green-600" />
+                    <p className="text-sm font-medium text-green-800">Growth Potential</p>
+                    <p className="text-lg font-bold text-green-900">{selectedJobRoleData.growth}</p>
+                  </div>
+                  <div className="text-center p-4 bg-purple-50 rounded-lg">
+                    <Users className="h-6 w-6 mx-auto mb-2 text-purple-600" />
+                    <p className="text-sm font-medium text-purple-800">Job Market</p>
+                    <p className="text-lg font-bold text-purple-900">Active</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Recommended Courses */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <BookOpen className="h-5 w-5" />
+                  Recommended Courses
+                </CardTitle>
+                <CardDescription>
+                  Complete these courses to build your skills for {selectedJobRoleData.name}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
                 <div className="grid md:grid-cols-2 gap-4">
-                  {selectedJobRoleData.courses.map((course, index) => (
-                    <Card key={index} className="border-muted">
-                      <CardHeader className="pb-3">
-                        <CardTitle className="text-base flex items-center justify-between">
-                          {course.title}
-                          <Badge variant={course.isPaid ? "default" : "secondary"}>
-                            {course.isPaid ? "Paid" : "Free"}
-                          </Badge>
-                        </CardTitle>
-                        <CardDescription className="text-sm">
-                          {course.provider} • {course.duration}
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent className="pt-0">
-                        <Button variant="outline" size="sm" asChild>
-                          <a href={course.link} target="_blank" rel="noopener noreferrer">
-                            View Course
-                            <ExternalLink className="w-3 h-3 ml-1" />
-                          </a>
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  ))}
+                  {selectedJobRoleData.courses.map((course, index) => {
+                    const courseId = `${selectedJobRoleData.id}-${index}`;
+                    const isCompleted = completedCourses.has(courseId);
+
+                    return (
+                      <Card key={index} className={`border-muted transition-all ${isCompleted ? 'bg-green-50 border-green-200' : ''}`}>
+                        <CardHeader className="pb-3">
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <CardTitle className="text-base flex items-center gap-2">
+                                {course.title}
+                                {isCompleted && <CheckCircle className="h-4 w-4 text-green-600" />}
+                              </CardTitle>
+                              <CardDescription className="text-sm mt-1">
+                                {course.provider} • {course.duration}
+                              </CardDescription>
+                            </div>
+                            <div className="flex flex-col gap-1">
+                              <Badge variant={course.isPaid ? "default" : "secondary"}>
+                                {course.isPaid ? "Paid" : "Free"}
+                              </Badge>
+                              <Badge variant="outline" className="text-xs">
+                                {course.difficulty}
+                              </Badge>
+                            </div>
+                          </div>
+                        </CardHeader>
+                        <CardContent className="pt-0">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <Star className="h-3 w-3 text-yellow-500" />
+                              <span className="text-sm text-gray-600">{course.rating}</span>
+                            </div>
+                            <div className="flex gap-2">
+                              <Button
+                                variant={isCompleted ? "outline" : "default"}
+                                size="sm"
+                                onClick={() => toggleCourseCompletion(courseId)}
+                              >
+                                {isCompleted ? (
+                                  <>
+                                    <CheckCircle className="w-3 h-3 mr-1" />
+                                    Completed
+                                  </>
+                                ) : (
+                                  <>
+                                    <Clock className="w-3 h-3 mr-1" />
+                                    Mark Complete
+                                  </>
+                                )}
+                              </Button>
+                              <Button variant="outline" size="sm" asChild>
+                                <a href={course.link} target="_blank" rel="noopener noreferrer">
+                                  <ExternalLink className="w-3 h-3" />
+                                </a>
+                              </Button>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
                 </div>
               </CardContent>
             </Card>
