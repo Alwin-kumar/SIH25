@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Domain {
+  id         Int         @id @default(autoincrement())
+  name       String      @unique
+  subdomains Subdomain[]
+}
+
+model Subdomain {
+  id       Int       @id @default(autoincrement())
+  name     String
+  domain   Domain    @relation(fields: [domainId], references: [id])
+  domainId Int
+  jobRoles JobRole[]
+}
+
+model JobRole {
+  id           Int           @id @default(autoincrement())
+  name         String
+  subdomain    Subdomain     @relation(fields: [subdomainId], references: [id])
+  subdomainId  Int
+  requirements String?
+  topSkill     String?
+  courses      Course[]
+  SalaryRange  SalaryRange[]
+}
+
+model Course {
+  id        Int     @id @default(autoincrement())
+  title     String
+  provider  String
+  link      String
+  duration  String
+  isPaid    Boolean
+  jobRole   JobRole @relation(fields: [jobRoleId], references: [id])
+  jobRoleId Int
+}
+
+model College {
+  id         Int      @id @default(autoincrement())
+  name       String
+  rank       Int?
+  ownership  String // Government / Private
+  location   String
+  programs   String[]
+  facilities String[]
+}
+
+model AptitudeQuestion {
+  id            Int      @id @default(autoincrement())
+  category      String // Quantitative aptitude, Logical reasoning, Verbal ability
+  question      String
+  options       String[]
+  correctAnswer String
+  explanation   String?
+}
+
+model SalaryRange {
+  id        Int     @id @default(autoincrement())
+  jobRole   JobRole @relation(fields: [jobRoleId], references: [id])
+  jobRoleId Int
+  min       Float
+  median    Float
+  max       Float
+}
