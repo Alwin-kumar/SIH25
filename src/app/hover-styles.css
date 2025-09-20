@@ -1,0 +1,95 @@
+/* Hover styles for better text visibility */
+.hover-text-black:hover {
+  color: black !important;
+}
+
+.hover-text-white:hover {
+  color: white !important;
+}
+
+/* Button hover styles */
+button:hover {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Label hover styles */
+label:hover {
+  transition: color 0.2s ease-in-out;
+}
+
+/* Interactive element hover styles */
+.cursor-pointer:hover {
+  transition: color 0.2s ease-in-out;
+}
+
+/* Dark mode hover adjustments */
+.dark .hover-text-black:hover {
+  color: white !important;
+}
+
+.dark .hover-text-white:hover {
+  color: black !important;
+}
+
+/* Ensure hover text is always visible */
+.hover\:text-black:hover {
+  color: black !important;
+}
+
+.hover\:text-white:hover {
+  color: white !important;
+}
+
+/* Dark mode hover text adjustments */
+.dark .hover\:text-black:hover {
+  color: white !important;
+}
+
+.dark .hover\:text-white:hover {
+  color: black !important;
+}
+
+/* Button variant specific hover styles */
+button[data-variant="outline"]:hover {
+  color: black !important;
+}
+
+button[data-variant="ghost"]:hover {
+  color: black !important;
+}
+
+.dark button[data-variant="outline"]:hover {
+  color: white !important;
+}
+
+.dark button[data-variant="ghost"]:hover {
+  color: white !important;
+}
+
+/* Radio group label hover styles */
+input[type="radio"] + label:hover {
+  color: black !important;
+}
+
+.dark input[type="radio"] + label:hover {
+  color: white !important;
+}
+
+/* General interactive text hover */
+[role="button"]:hover,
+button:hover,
+a:hover {
+  transition: color 0.2s ease-in-out;
+}
+
+/* Ensure sufficient contrast on hover */
+*:hover {
+  transition: color 0.2s ease-in-out;
+}
+
+/* Course card hover styles */
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}

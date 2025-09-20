@@ -12,7 +12,13 @@ import dynamic from "next/dynamic";
 
 
 
-const COLORS = ["#00ffcc", "#33ccff", "#9966ff", "#ff66cc", "#ffff66"];
+const COLORS = [
+  "#78FFB0", // aurora green
+  "#3DF3FF", // aurora teal
+  "#2E2CFF", // aurora blue
+  "#A855F7", // aurora purple
+  "#FF5EDD"  // aurora pink
+];
 
 const features = [
   {
@@ -93,6 +99,7 @@ export default function Home() {
   }, []);
 
   return (
+    <div>
     <motion.div className="min-h-screen bg-background relative overflow-hidden  grid   px-4 text-gray-200" style={{ backgroundImage }}>
       
       <Header />
@@ -233,13 +240,13 @@ export default function Home() {
       </section>
 
       
-
+</motion.div>
       {/* Footer */}
       <footer className="py-8 px-4 border-t border-border">
         <div className="container mx-auto text-center">
           <p className="text-muted-foreground">Made by Future Forge</p>
         </div>
       </footer>
-    </motion.div>
+    </div>
   );
 }

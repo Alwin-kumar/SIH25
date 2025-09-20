@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -31,6 +31,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import Link from "next/link";
+import { staggerContainer, staggerItem, hoverVariants, iconVariants } from "@/lib/animations";
 
 const menuItems = [
   {
@@ -60,9 +61,9 @@ const menuItems = [
     url: "/dashboard/colleges",
   },
   {
-    title: "Interview Prep",
+    title: "Mock Test",
     icon: Target,
-    url: "/dashboard/interview-prep",
+    url: "/dashboard/mock-test",
   },
   {
     title: "Resume",
@@ -82,43 +83,91 @@ export default function Sidebar({ children }) {
   return (
     <SidebarProvider>
       <div className="flex h-screen w-full">
-        <ShadcnSidebar className="border-r border-border">
-          <SidebarHeader className="p-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-primary">FUTURE FORGE⚡⚡</h2>
-              <SidebarTrigger />
-            </div>
-          </SidebarHeader>
+        <motion.div
+          initial={{ x: -300, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+        >
+          <ShadcnSidebar className="border-r border-border bg-gradient-to-b from-background to-muted/20">
+            <SidebarHeader className="p-4">
+              <motion.div
+                className="flex items-center justify-between"
+                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.2 }}
+              >
+                <motion.h2
+                  className="text-lg font-semibold text-primary cursor-pointer"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  FUTURE FORGE⚡
+                </motion.h2>
+                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+                  <SidebarTrigger />
+                </motion.div>
+              </motion.div>
+            </SidebarHeader>
 
-          <SidebarContent>
-            <SidebarGroup>
-              <SidebarGroupLabel>Navigation</SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  {menuItems.map((item) => (
-                    <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton
-                        asChild
-                        disabled={item.disabled && !isLoggedIn}
-                        className={item.disabled && !isLoggedIn ? "opacity-50 cursor-not-allowed" : ""}
-                      >
-                        <Link href={item.url} className="flex items-center gap-2">
-                          <item.icon className="h-4 w-4" />
-                          <span>{item.title}</span>
-                          {item.disabled && !isLoggedIn && (
-                            <span className="text-xs text-muted-foreground ml-auto">Login required</span>
-                          )}
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
-          </SidebarContent>
+            <SidebarContent>
+              <motion.div
+                variants={staggerContainer}
+                initial="hidden"
+                animate="visible"
+              >
+                <SidebarGroup>
+                  <SidebarGroupLabel className="text-primary font-semibold">Navigation</SidebarGroupLabel>
+                  <SidebarGroupContent>
+                    <SidebarMenu>
+                      {menuItems.map((item, index) => (
+                        <motion.div key={item.title} variants={staggerItem}>
+                          <SidebarMenuItem>
+                            <SidebarMenuButton
+                              asChild
+                              disabled={item.disabled && !isLoggedIn}
+                              className={`group relative overflow-hidden ${
+                                item.disabled && !isLoggedIn ? "opacity-50 cursor-not-allowed" : ""
+                              }`}
+                            >
+                              <Link href={item.url} className="flex items-center gap-2 w-full">
+                                <motion.div
+                                  whileHover={{ scale: 1.2, rotate: 5 }}
+                                  transition={{ duration: 0.2 }}
+                                  className="relative"
+                                >
+                                  <item.icon className="h-4 w-4" />
+                                </motion.div>
+                                <motion.span
+                                  whileHover={{ x: 2 }}
+                                  transition={{ duration: 0.2 }}
+                                >
+                                  {item.title}
+                                </motion.span>
+                                {item.disabled && !isLoggedIn && (
+                                  <motion.span
+                                    className="text-xs text-muted-foreground ml-auto"
+                                    initial={{ opacity: 0.7 }}
+                                    whileHover={{ opacity: 1 }}
+                                  >
+                                    Login required
+                                  </motion.span>
+                                )}
+                                <motion.div
+                                  className="absolute inset-0 bg-gradient-to-r from-primary/10 to-accent/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                                  layoutId="sidebarHover"
+                                />
+                              </Link>
+                            </SidebarMenuButton>
+                          </SidebarMenuItem>
+                        </motion.div>
+                      ))}
+                    </SidebarMenu>
+                  </SidebarGroupContent>
+                </SidebarGroup>
+              </motion.div>
+            </SidebarContent>
 
-          <SidebarFooter className="p-4">
-            {isLoggedIn ? (
+            <SidebarFooter className="p-4">
+              {isLoggedIn ? (
               <div className="flex items-center gap-2">
                 <Avatar className="h-8 w-8">
                   <AvatarImage src="/avatar.jpg" alt="User" />
@@ -140,7 +189,8 @@ export default function Sidebar({ children }) {
               </Button>
             )}
           </SidebarFooter>
-        </ShadcnSidebar>
+          </ShadcnSidebar>
+        </motion.div>
 
         <main className="flex-1 overflow-auto">
           <motion.div

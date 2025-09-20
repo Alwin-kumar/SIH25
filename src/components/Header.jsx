@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -13,6 +13,7 @@ import {
 import { ChevronDown, User, MessageCircle, FileText, Briefcase, LogOut } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
+import { hoverVariants, staggerContainer, staggerItem, iconVariants } from "@/lib/animations";
 
 export default function Header() {
   const { user, isAuthenticated, signOut } = useAuth();
@@ -29,44 +30,117 @@ export default function Header() {
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         {/* Logo */}
         <motion.div
-          whileHover={{ scale: 1.05 }}
-          className="text-2xl font-bold text-primary cursor-pointer"
+          whileHover={{ scale: 1.05, rotate: [0, -5, 5, 0] }}
+          whileTap={{ scale: 0.95 }}
+          transition={{ duration: 0.3 }}
+          className="text-2xl font-bold text-primary cursor-pointer relative group"
           onClick={() => router.push("/")}
         >
-          FUTURE FORGE⚡
+          <motion.span
+            className="inline-block"
+            whileHover={{ textShadow: "0 0 20px rgba(59, 130, 246, 0.5)" }}
+          >
+            FUTURE FORGE⚡
+          </motion.span>
+          <motion.div
+            className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary to-accent origin-left"
+            initial={{ scaleX: 0 }}
+            whileHover={{ scaleX: 1 }}
+            transition={{ duration: 0.3 }}
+          />
         </motion.div>
 
         {/* Navigation */}
-        <nav className="hidden md:flex items-center space-x-6">
+        <motion.nav
+          className="hidden md:flex items-center space-x-6"
+          variants={staggerContainer}
+          initial="hidden"
+          animate="visible"
+        >
           {/* Tools Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="text-foreground hover:text-primary">
-                Tools <ChevronDown className="ml-1 h-4 w-4" />
-              </Button>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button variant="ghost" className="text-foreground hover:text-primary group">
+                  <motion.span
+                    whileHover={{ x: -2 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    Tools
+                  </motion.span>
+                  <motion.div
+                    animate={{ rotate: showUserMenu ? 180 : 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <ChevronDown className="ml-1 h-4 w-4" />
+                  </motion.div>
+                </Button>
+              </motion.div>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="bg-card border-border">
-              <DropdownMenuItem
-                className="hover:bg-accent cursor-pointer"
-                onClick={() => router.push("/dashboard/ai-chatbot")}
+            <DropdownMenuContent className="bg-card border-border p-2">
+              <motion.div
+                variants={staggerContainer}
+                initial="hidden"
+                animate="visible"
               >
-                <MessageCircle className="mr-2 h-4 w-4" />
-                AI Chatbot
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="hover:bg-accent cursor-pointer"
-                onClick={() => router.push("/dashboard/resume")}
-              >
-                <FileText className="mr-2 h-4 w-4" />
-                Resume Builder
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="hover:bg-accent cursor-pointer"
-                onClick={() => router.push("/dashboard/career-roadmap")}
-              >
-                <Briefcase className="mr-2 h-4 w-4" />
-                Career Roadmap
-              </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="hover:bg-accent cursor-pointer rounded-md p-3 group"
+                  onClick={() => router.push("/dashboard/ai-chatbot")}
+                >
+                  <motion.div
+                    className="flex items-center gap-3"
+                    whileHover={{ x: 4 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <motion.div
+                      whileHover={{ scale: 1.2, rotate: 5 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <MessageCircle className="h-4 w-4" />
+                    </motion.div>
+                    <span>AI Chatbot</span>
+                  </motion.div>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="hover:bg-accent cursor-pointer rounded-md p-3 group"
+                  onClick={() => router.push("/dashboard/resume")}
+                >
+                  <motion.div
+                    className="flex items-center gap-3"
+                    whileHover={{ x: 4 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <motion.div
+                      whileHover={{ scale: 1.2, rotate: 5 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <FileText className="h-4 w-4" />
+                    </motion.div>
+                    <span>Resume Builder</span>
+                  </motion.div>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="hover:bg-accent cursor-pointer rounded-md p-3 group"
+                  onClick={() => router.push("/dashboard/career-roadmap")}
+                >
+                  <motion.div
+                    className="flex items-center gap-3"
+                    whileHover={{ x: 4 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <motion.div
+                      whileHover={{ scale: 1.2, rotate: 5 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <Briefcase className="h-4 w-4" />
+                    </motion.div>
+                    <span>Career Roadmap</span>
+                  </motion.div>
+                </DropdownMenuItem>
+              </motion.div>
             </DropdownMenuContent>
           </DropdownMenu>
 
@@ -120,7 +194,7 @@ export default function Header() {
               Sign In
             </Button>
           )}
-        </nav>
+        </motion.nav>
 
         {/* Mobile Menu Button */}
         <Button variant="ghost" className="md:hidden">

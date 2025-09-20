@@ -332,10 +332,12 @@ export default function CareerRoadmap() {
                                   </>
                                 )}
                               </Button>
-                              <Button variant="outline" size="sm" asChild>
-                                <a href={course.link} target="_blank" rel="noopener noreferrer">
-                                  <ExternalLink className="w-3 h-3" />
-                                </a>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => window.open(course.link, '_blank', 'noopener,noreferrer')}
+                              >
+                                <ExternalLink className="w-3 h-3" />
                               </Button>
                             </div>
                           </div>

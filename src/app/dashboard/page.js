@@ -81,9 +81,9 @@ const dashboardFeatures = [
 ];
 
 const stats = [
-  { label: "Active Users", value: "10K+", icon: Users },
-  { label: "Success Rate", value: "94%", icon: Award },
-  { label: "Avg. Response", value: "< 2min", icon: Clock },
+  { label: "Career Paths ", value: "25K+", icon: MapPin },
+  { label: "Job Placement Rate", value: "89%", icon: Award },
+  { label: "Skills Enhanced", value: "150K+", icon: Target },
 ];
 
 export default function Dashboard() {
