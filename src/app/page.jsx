@@ -13,11 +13,11 @@ import dynamic from "next/dynamic";
 
 
 const COLORS = [
-  "#78FFB0", // aurora green
-  "#3DF3FF", // aurora teal
-  "#2E2CFF", // aurora blue
-  "#A855F7", // aurora purple
-  "#FF5EDD"  // aurora pink
+  "#78FFB0", 
+  "#3DF3FF", 
+  "#2E2CFF", 
+  "#A855F7", 
+  "#FF5EDD"  
 ];
 
 const features = [
@@ -127,7 +127,7 @@ export default function Home() {
                 Future Readiness
               </h1>
               <p className="text-xl md:text-2xl text-muted-foreground mb-8">
-                Your AI-powered guide to career and education decisions
+                Your guide to career and education decisions
               </p>
                   <Link href="/dashboard">
                     <Button size="lg" className="bg-primary hover:bg-primary/80 text-primary-foreground px-8 py-3 text-lg">
